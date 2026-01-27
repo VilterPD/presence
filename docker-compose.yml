@@ -1,0 +1,80 @@
+# docker-compose.yml
+# Fully inline example (no .env required). It is recommended to use docker-compose.env.yml.
+
+services:
+  presence:
+    container_name: presence
+    image: vilter/presence:latest
+    restart: unless-stopped
+
+    environment:
+      # =========================
+      # Core
+      # =========================
+      ROLE: primary
+      DB_PATH: /data/presence.db
+      INIT_DB: "1"
+
+      # =========================
+      # Absence (Hawk)
+      # =========================
+      ABSENCE_BASE_URL: https://app.absence.io
+      ABSENCE_API_ID: ""
+      ABSENCE_API_KEY: ""
+
+      # =========================
+      # 3CX (OAuth service principal)
+      # =========================
+      THREECX_PBX_FQDN: ""
+      THREECX_CLIENT_ID: ""
+      THREECX_CLIENT_SECRET: ""
+
+      # =========================
+      # Profiles
+      # =========================
+      THREECX_PROFILE_AVAILABLE: Available
+      THREECX_PROFILE_AWAY: Away
+
+      # =========================
+      # Polling / behaviour
+      # =========================
+      SYNC_INTERVAL_SECONDS: "300"
+      DAY_START_HOUR: "7"
+      DAY_END_HOUR: "20"
+      INTERVAL_DAY_SECONDS: "60"
+      INTERVAL_NIGHT_SECONDS: "600"
+
+      # =========================
+      # Exclusions
+      # =========================
+      EXCLUDE_EMAILS: ""
+      EXCLUDE_EXTENSIONS: ""
+
+      # =========================
+      # Health / failover (watcher.py)
+      # =========================
+      # PRIMARY:
+      #   PRIMARY_HOST should be empty
+      # BACKUP:
+      #   set PRIMARY_HOST to the primary's IP/DNS (e.g. 100.x.y.z)
+      PRIMARY_HOST: ""
+      HEALTH_PORT: "49317"
+      CHECK_INTERVAL: "10"
+      FAILOVER_AFTER: "60"
+      FAILBACK_AFTER: "600"
+
+      # =========================
+      # Debug / safety
+      # =========================
+      SYNC_DRY_RUN: "false"
+
+    volumes:
+      - presence-data:/data
+
+    # Publish health port so the backup can reach the primary.
+    # Keep enabled on PRIMARY. On BACKUP it's optional.
+    ports:
+      - "49317:49317"
+
+volumes:
+  presence-data:
