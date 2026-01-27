@@ -156,7 +156,7 @@ Typical intervals (for example once per minute during office hours) are within n
 - Only absence.io and 3CX are currently supported.
 - SQLite is used by design; no external database support yet.
 - No built-in rate limiting beyond polling intervals.
-- No encryption or authentication on the health port (intended for private networks only).
+- No encryption or authentication on the health port (intended for private networks/tailscale/wireguard only).
 
 ---
 
