@@ -5,13 +5,6 @@ ENV PYTHONUNBUFFERED=1
 
 WORKDIR /app
 
-# minimal system deps (optional: sqlite3 CLI only if you want to debug inside container)
-RUN apt-get update \
- && apt-get install -y --no-install-recommends \
-    ca-certificates \
-    sqlite3 \
- && rm -rf /var/lib/apt/lists/*
-
 # install python deps first (layer caching)
 COPY requirements.txt .
 RUN pip install --no-cache-dir -r requirements.txt
