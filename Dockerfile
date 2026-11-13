@@ -7,7 +7,9 @@ WORKDIR /app
 
 # install python deps first (layer caching)
 COPY requirements.txt .
-RUN pip install --no-cache-dir -r requirements.txt
+RUN umask 022 \
+ && pip install --no-cache-dir -r requirements.txt \
+ && chmod -R a+rX /usr/local/lib/python3.12/site-packages
 
 # copy app
 COPY . .
@@ -28,5 +30,8 @@ VOLUME ["/data"]
 
 # drop privileges
 USER presence
+
+# fail the build if the application user cannot import its dependencies
+RUN python -c "import httpx, mohawk"
 
 ENTRYPOINT ["./entrypoint.sh"]
